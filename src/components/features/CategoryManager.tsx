@@ -31,7 +31,7 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({
 
     const handleEdit = (category: Category) => {
         setEditingId(category.id);
-        setEditForm(category);
+        setEditForm({ ...category });
     };
 
     const handleSaveEdit = () => {
@@ -45,6 +45,12 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({
     const handleCancelEdit = () => {
         setEditingId(null);
         setEditForm(null);
+    };
+
+    const handleEditFormChange = (field: keyof Category, value: string) => {
+        if (editForm) {
+            setEditForm({ ...editForm, [field]: value });
+        }
     };
 
     return (
@@ -95,18 +101,18 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({
                                 <div className="space-y-2">
                                     <Input
                                         value={editForm?.name || ''}
-                                        onChange={(e) => setEditForm({ ...editForm!, name: e.target.value })}
+                                        onChange={(e) => handleEditFormChange('name', e.target.value)}
                                     />
                                     <Textarea
                                         value={editForm?.description || ''}
-                                        onChange={(e) => setEditForm({ ...editForm!, description: e.target.value })}
+                                        onChange={(e) => handleEditFormChange('description', e.target.value)}
                                     />
                                     <div className="flex items-center gap-2">
                                         <input
                                             type="color"
                                             className="w-6 h-6 rounded border"
                                             value={editForm?.color || ''}
-                                            onChange={(e) => setEditForm({ ...editForm!, color: e.target.value })}
+                                            onChange={(e) => handleEditFormChange('color', e.target.value)}
                                         />
                                         <Button variant="ghost" size="icon" onClick={handleSaveEdit}>
                                             <Check className="w-4 h-4" />

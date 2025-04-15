@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ArrowLeft } from 'lucide-react';
-import { useSavedUrls } from '../hooks/useSavedUrls';
 import { useUrlFilters } from '../hooks/useUrlFilters';
-import { Category } from '../types/storage';
+import { Category, SavedUrl } from '../types/storage';
 import { Button } from '../components/ui/Button';
 import { FilterBar } from '../components/features/FilterBar';
 import { SavedUrlsList } from '../components/features/SavedUrlsList';
+import { ErrorMessage } from '../components/common/ErrorMessage';
+import { loadCategories } from '../services/category';
+import { loadSavedUrls, deleteSavedUrl } from '../services/url';
 
 const SavedUrls: React.FC = () => {
-    const { savedUrls, loading, deleteUrl } = useSavedUrls();
+    const [savedUrls, setSavedUrls] = useState<SavedUrl[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<{ message: string } | null>(null);
     const {
         selectedCategory,
         setSelectedCategory,
@@ -20,17 +24,32 @@ const SavedUrls: React.FC = () => {
     } = useUrlFilters(savedUrls);
 
     useEffect(() => {
-        const loadCategories = async () => {
-            const data = await chrome.storage.sync.get('categories');
-            if (data.categories) {
-                setCategories(data.categories);
+        const loadData = async () => {
+            try {
+                setError(null);
+                const [loadedUrls, loadedCategories] = await Promise.all([
+                    loadSavedUrls(),
+                    loadCategories()
+                ]);
+                setSavedUrls(loadedUrls);
+                setCategories(loadedCategories);
+            } catch (err) {
+                setError({ message: err instanceof Error ? err.message : 'Failed to load data' });
+            } finally {
+                setLoading(false);
             }
         };
-        loadCategories();
+        loadData();
     }, []);
 
     const handleDelete = async (id: string) => {
-        await deleteUrl(id);
+        try {
+            setError(null);
+            const updatedUrls = await deleteSavedUrl(id, savedUrls);
+            setSavedUrls(updatedUrls);
+        } catch (err) {
+            setError({ message: err instanceof Error ? err.message : 'Failed to delete URL' });
+        }
     };
 
     return (
@@ -53,6 +72,8 @@ const SavedUrls: React.FC = () => {
                 onCategoryChange={setSelectedCategory}
                 onDateChange={setDateFilter}
             />
+
+            {error && <ErrorMessage error={error} />}
 
             <SavedUrlsList
                 urls={filteredUrls}

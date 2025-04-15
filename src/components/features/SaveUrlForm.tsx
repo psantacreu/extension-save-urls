@@ -10,6 +10,7 @@ interface SaveUrlFormProps {
     onSave: (categoryId: string) => Promise<void>;
     loading: boolean;
     error: { message: string } | null;
+    success?: boolean;
 }
 
 export const SaveUrlForm: React.FC<SaveUrlFormProps> = ({
@@ -17,15 +18,16 @@ export const SaveUrlForm: React.FC<SaveUrlFormProps> = ({
     onSave,
     loading,
     error,
+    success,
 }) => {
     const [selectedCategory, setSelectedCategory] = useState<string>('');
-    const [success, setSuccess] = useState(false);
+    const [localSuccess, setLocalSuccess] = useState(false);
 
     const handleSave = async () => {
         await onSave(selectedCategory);
-        setSuccess(true);
+        setLocalSuccess(true);
         setSelectedCategory('');
-        setTimeout(() => setSuccess(false), 3000);
+        setTimeout(() => setLocalSuccess(false), 3000);
     };
 
     return (
@@ -44,7 +46,7 @@ export const SaveUrlForm: React.FC<SaveUrlFormProps> = ({
                     </SelectContent>
                 </Select>
                 {error && <ErrorMessage error={error} />}
-                {success && (
+                {(success || localSuccess) && (
                     <div className="flex items-center gap-2 text-green-600 text-sm">
                         <CheckCircle2 className="w-4 h-4" />
                         URL saved successfully!

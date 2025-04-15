@@ -1,4 +1,5 @@
 import { SavedUrl } from '../types/storage';
+import { setStorageData } from './chrome';
 
 export const saveUrl = async (
     url: string,
@@ -48,4 +49,11 @@ export const saveUrl = async (
     const savedUrls = await chrome.storage.sync.get('savedUrls');
     const updatedUrls = [...(savedUrls.savedUrls || []), newUrl];
     await chrome.storage.sync.set({ savedUrls: updatedUrls });
+};
+
+export const saveApiKey = async (apiKey: string): Promise<void> => {
+    if (!apiKey) {
+        throw new Error('API key cannot be empty');
+    }
+    await setStorageData({ openaiApiKey: apiKey });
 }; 

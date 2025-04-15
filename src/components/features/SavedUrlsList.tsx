@@ -31,6 +31,7 @@ export const SavedUrlsList: React.FC<SavedUrlsListProps> = ({
                 <UrlCard
                     key={url.id}
                     title={url.title}
+                    url={url.url}
                     summary={url.summary}
                     categoryId={url.categoryId}
                     savedAt={url.savedAt}
