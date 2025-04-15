@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Linkbook",
+  "version": "1.0.0",
+  "description": "Summarizing web content and save it for later using OpenAI",
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "options_page": "options.html",
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "permissions": ["activeTab", "storage"]
+}
