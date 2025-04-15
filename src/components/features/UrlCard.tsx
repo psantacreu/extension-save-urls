@@ -1,20 +1,15 @@
 import React from 'react';
 import { Trash2, ExternalLink } from 'lucide-react';
-import { Category } from '../../types/storage';
+import { UrlCardProps } from '../../types/storage';
 import { Button } from '../ui/Button';
 import { formatSavedDate } from '../../utils/date';
 
-interface UrlCardProps {
-    title: string;
-    url: string;
-    summary: string;
-    categoryId: string;
-    savedAt: number;
-    categories: Category[];
-    onDelete?: () => void;
-}
-
-export const UrlCard: React.FC<UrlCardProps> = ({
+/**
+ * Component that displays a saved URL with its metadata
+ * @param props - Component props
+ * @returns A card displaying URL information
+ */
+const UrlCard: React.FC<UrlCardProps> = ({
     title,
     url,
     summary,
@@ -24,6 +19,12 @@ export const UrlCard: React.FC<UrlCardProps> = ({
     onDelete,
 }) => {
     const category = categories.find(c => c.id === categoryId);
+    const formattedDate = formatSavedDate(savedAt);
+
+    const handleDelete = (e: React.MouseEvent) => {
+        e.preventDefault();
+        onDelete?.();
+    };
 
     return (
         <div className="card p-4 bg-card border rounded-lg">
@@ -43,8 +44,9 @@ export const UrlCard: React.FC<UrlCardProps> = ({
                     <Button
                         variant="ghost"
                         size="icon"
-                        onClick={onDelete}
+                        onClick={handleDelete}
                         className="text-muted-foreground hover:text-destructive"
+                        aria-label="Delete URL"
                     >
                         <Trash2 className="w-4 h-4" />
                     </Button>
@@ -57,11 +59,14 @@ export const UrlCard: React.FC<UrlCardProps> = ({
                     style={{
                         backgroundColor: category?.color || '#000',
                     }}
+                    aria-label={`Category color: ${category?.name || 'Uncategorized'}`}
                 />
                 <span className="text-xs text-muted-foreground">
-                    {category?.name || 'Uncategorized'} • Saved {formatSavedDate(savedAt)}
+                    {category?.name || 'Uncategorized'} • Saved {formattedDate}
                 </span>
             </div>
         </div>
     );
-}; 
+};
+
+export default UrlCard; 

@@ -5,7 +5,7 @@ import { Header } from '../components/layout/Header';
 import { ApiConfigForm } from '../components/features/ApiConfigForm';
 import { CategoryManager } from '../components/features/CategoryManager';
 import { getStorageData } from '../services/chrome';
-import { saveApiKey } from '../services/api';
+import { saveApiKey } from '../services/openai';
 import { addCategory, deleteCategory, updateCategory } from '../services/category';
 
 const Options: React.FC = () => {

@@ -2,11 +2,8 @@
  * Represents a browser tab with its essential properties
  */
 export interface Tab {
-    /** The unique identifier of the tab */
     id?: number;
-    /** The URL of the tab */
     url?: string;
-    /** The title of the tab */
     title?: string;
 }
 
@@ -14,9 +11,7 @@ export interface Tab {
  * Represents a summary of a web page
  */
 export interface Summary {
-    /** The content of the summary */
     content: string;
-    /** The timestamp when the summary was generated */
     timestamp: number;
 }
 
@@ -28,6 +23,7 @@ export enum ErrorCode {
     API_ERROR = 'API_ERROR',
     REQUEST_FAILED = 'REQUEST_FAILED',
     TAB_ERROR = 'TAB_ERROR',
+    STORAGE_ERROR = 'STORAGE_ERROR',
     UNKNOWN_ERROR = 'UNKNOWN_ERROR'
 }
 
@@ -35,7 +31,6 @@ export enum ErrorCode {
  * Custom error class for handling application errors
  */
 export class ErrorState extends Error {
-    /** The error code associated with the error */
     code?: ErrorCode;
 
     constructor({ message, code }: { message: string; code?: ErrorCode }) {
@@ -50,9 +45,7 @@ export class ErrorState extends Error {
  * Represents the loading state of an operation
  */
 export interface LoadingState {
-    /** Whether the operation is in progress */
     isLoading: boolean;
-    /** Optional message to display during loading */
     message?: string;
 }
 
@@ -60,8 +53,6 @@ export interface LoadingState {
  * Represents a category with a unique identifier and a name
  */
 export interface Category {
-    /** The unique identifier of the category */
     id: string;
-    /** The name of the category */
     name: string;
 } 

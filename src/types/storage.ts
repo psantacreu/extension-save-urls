@@ -1,3 +1,6 @@
+/**
+ * Represents a category for organizing saved URLs
+ */
 export interface Category {
     id: string;
     name: string;
@@ -6,6 +9,9 @@ export interface Category {
     isDefault?: boolean;
 }
 
+/**
+ * Represents a saved URL with its metadata
+ */
 export interface SavedUrl {
     id: string;
     url: string;
@@ -15,13 +21,19 @@ export interface SavedUrl {
     savedAt: number;
 }
 
+/**
+ * Structure of data stored in Chrome's sync storage
+ */
 export interface StorageData {
     openaiApiKey?: string;
     categories?: Category[];
     savedUrls?: SavedUrl[];
 }
 
-export const DEFAULT_CATEGORIES: Category[] = [
+/**
+ * Default categories that are available when the extension is first installed
+ */
+export const DEFAULT_CATEGORIES: Readonly<Category[]> = [
     { 
         id: 'tutorials', 
         name: 'Tutorials', 
@@ -57,4 +69,17 @@ export const DEFAULT_CATEGORIES: Category[] = [
         color: '#EF4444',
         isDefault: true
     }
-]; 
+] as const;
+
+/**
+ * Props for the UrlCard component
+ */
+export interface UrlCardProps {
+    title: string;
+    url: string;
+    summary: string;
+    categoryId: string;
+    savedAt: number;
+    categories: Category[];
+    onDelete?: () => void;
+} 

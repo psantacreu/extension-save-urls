@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/input';
 import { ErrorMessage } from '../common/ErrorMessage';
-import { Key, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Key, CheckCircle2, AlertCircle, ExternalLink } from 'lucide-react';
 
 interface ApiConfigFormProps {
     initialApiKey: string;
@@ -30,15 +30,13 @@ export const ApiConfigForm: React.FC<ApiConfigFormProps> = ({
             <div className="space-y-4">
                 <div className="space-y-2">
                     <p className="text-sm text-gray-600">
-                        Configure your OpenAI API key to enable AI-powered features. Your API key is stored securely and only used for your requests. You can obtain an API key from the{' '}
-                        <a
-                            href="https://platform.openai.com/api-keys"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-accent hover:underline"
-                        >
-                            OpenAI API dashboard
-                        </a>.
+                        Configure your OpenAI API key to enable AI-powered features. Your API key is stored securely and only used for your requests.
+                    </p>
+                    <p className="text-sm text-gray-600 flex gap-1">
+                        You can get an API key from {' '}
+                        <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="font-semibold hover:underline flex gap-1 items-center">
+                            OpenAI <ExternalLink className="w-3 h-3" />
+                        </a>
                     </p>
                 </div>
                 <div className="flex items-center justify-between">

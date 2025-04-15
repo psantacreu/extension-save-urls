@@ -1,25 +1,64 @@
 import { ErrorState, ErrorCode } from '../types';
 import { Category } from '../types/storage';
+import { 
+    OpenAIResponse, 
+    CategorizationResult, 
+    DEFAULT_OPENAI_CONFIG 
+} from '../types/openai';
 
-const API_URL = 'https://api.openai.com/v1/chat/completions';
+/**
+ * Creates headers for OpenAI API requests
+ * @param apiKey - OpenAI API key
+ * @returns Headers object
+ */
+const createHeaders = (apiKey: string) => ({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${apiKey}`
+});
 
+/**
+ * Handles API errors and converts them to ErrorState
+ * @param error - The error to handle
+ * @throws ErrorState
+ */
+const handleApiError = (error: unknown): never => {
+    if (error instanceof ErrorState) {
+        throw error;
+    }
+    if (error instanceof Error) {
+        throw new ErrorState({ 
+            message: error.message,
+            code: ErrorCode.API_ERROR
+        });
+    }
+    throw new ErrorState({ 
+        message: 'Unknown error occurred',
+        code: ErrorCode.API_ERROR
+    });
+};
+
+/**
+ * Summarizes a URL using OpenAI API
+ * @param url - The URL to summarize
+ * @returns Promise with the summary
+ * @throws ErrorState if API key is missing or request fails
+ */
 export const summarizeUrl = async (url: string): Promise<string> => {
-    // Get API key from Chrome storage
     const { openaiApiKey } = await chrome.storage.sync.get(['openaiApiKey']);
     
     if (!openaiApiKey) {
-        throw new ErrorState({ message: 'OpenAI API key not found', code: ErrorCode.API_KEY_MISSING });
+        throw new ErrorState({ 
+            message: 'OpenAI API key not found', 
+            code: ErrorCode.API_KEY_MISSING 
+        });
     }
 
     try {
-        const response = await fetch(API_URL, {
+        const response = await fetch(DEFAULT_OPENAI_CONFIG.apiUrl, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${openaiApiKey}`
-            },
+            headers: createHeaders(openaiApiKey),
             body: JSON.stringify({
-                model: 'gpt-4o',
+                model: DEFAULT_OPENAI_CONFIG.defaultModel,
                 messages: [
                     {
                         role: 'system',
@@ -30,7 +69,7 @@ export const summarizeUrl = async (url: string): Promise<string> => {
                         content: `Please summarize this URL: ${url}`
                     }
                 ],
-                max_tokens: 150
+                max_tokens: DEFAULT_OPENAI_CONFIG.maxTokens
             })
         });
 
@@ -41,21 +80,33 @@ export const summarizeUrl = async (url: string): Promise<string> => {
             });
         }
 
-        const data = await response.json();
+        const data = await response.json() as OpenAIResponse;
         return data.choices[0].message.content;
     } catch (error) {
-        throw new ErrorState({ 
-            message: error instanceof Error ? error.message : 'Unknown error occurred',
-            code: ErrorCode.REQUEST_FAILED
-        });
+        return handleApiError(error);
     }
 };
 
+/**
+ * Summarizes content and categorizes it into one of the provided categories
+ * @param content - The content to analyze
+ * @param categories - Available categories
+ * @param apiKey - OpenAI API key
+ * @returns Promise with summary and category ID
+ * @throws ErrorState if request fails
+ */
 export const summarizeAndCategorize = async (
     content: string,
     categories: Category[],
     apiKey: string
-): Promise<{ summary: string; categoryId: string }> => {
+): Promise<CategorizationResult> => {
+    if (!apiKey) {
+        throw new ErrorState({
+            message: 'OpenAI API key is required',
+            code: ErrorCode.API_KEY_MISSING
+        });
+    }
+
     const prompt = `Please analyze this content and:
 1. Provide a concise summary (max 100 words)
 2. Categorize it into one of these categories: ${categories.map(c => c.name).join(', ')}
@@ -63,28 +114,53 @@ export const summarizeAndCategorize = async (
 
 Content: ${content}`;
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
-            model: 'gpt-3.5-turbo',
-            messages: [{ role: 'user', content: prompt }],
-            temperature: 0.7,
-        }),
-    });
+    try {
+        const response = await fetch(DEFAULT_OPENAI_CONFIG.apiUrl, {
+            method: 'POST',
+            headers: createHeaders(apiKey),
+            body: JSON.stringify({
+                model: DEFAULT_OPENAI_CONFIG.defaultModel,
+                messages: [{ role: 'user', content: prompt }],
+                temperature: DEFAULT_OPENAI_CONFIG.temperature,
+            }),
+        });
 
-    if (!response.ok) {
-        throw new Error('Failed to analyze content');
+        if (!response.ok) {
+            throw new ErrorState({ 
+                message: 'Failed to analyze content',
+                code: ErrorCode.API_ERROR
+            });
+        }
+
+        const data = await response.json() as OpenAIResponse;
+        const result = JSON.parse(data.choices[0].message.content) as CategorizationResult;
+        
+        const matchedCategory = categories.find(
+            c => c.name.toLowerCase() === result.categoryId.toLowerCase()
+        );
+        
+        if (!matchedCategory) {
+            throw new ErrorState({
+                message: 'Failed to match category',
+                code: ErrorCode.API_ERROR
+            });
+        }
+        
+        return {
+            summary: result.summary,
+            categoryId: matchedCategory.id,
+        };
+    } catch (error) {
+        return handleApiError(error);
     }
+};
 
-    const data = await response.json();
-    const result = JSON.parse(data.choices[0].message.content);
-    
-    return {
-        summary: result.summary,
-        categoryId: categories.find(c => c.name.toLowerCase() === result.categoryId.toLowerCase())?.id || categories[0].id,
-    };
+export const saveApiKey = async (apiKey: string): Promise<void> => {
+    if (!apiKey) {
+        throw new ErrorState({ 
+            message: 'API key cannot be empty',
+            code: ErrorCode.API_KEY_MISSING
+        });
+    }
+    await chrome.storage.sync.set({ openaiApiKey: apiKey });
 }; 

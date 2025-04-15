@@ -1,7 +1,7 @@
 import React from 'react';
 import { SavedUrl } from '../../types/storage';
 import { Category } from '../../types/storage';
-import { UrlCard } from './UrlCard';
+import UrlCard from './UrlCard';
 import { LoadingState } from '../common/LoadingState';
 
 interface SavedUrlsListProps {
