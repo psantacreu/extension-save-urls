@@ -110,7 +110,11 @@ export const summarizeAndCategorize = async (
     const prompt = `Please analyze this content and:
 1. Provide a concise summary (max 100 words)
 2. Categorize it into one of these categories: ${categories.map(c => c.name).join(', ')}
-3. Return the response in JSON format with "summary" and "categoryId" fields
+3. Return ONLY a valid JSON object with this exact structure:
+{
+    "summary": "your summary here",
+    "categoryId": "exact category name from the list above"
+}
 
 Content: ${content}`;
 
@@ -122,6 +126,7 @@ Content: ${content}`;
                 model: DEFAULT_OPENAI_CONFIG.defaultModel,
                 messages: [{ role: 'user', content: prompt }],
                 temperature: DEFAULT_OPENAI_CONFIG.temperature,
+                response_format: { type: "json_object" }
             }),
         });
 
@@ -133,7 +138,16 @@ Content: ${content}`;
         }
 
         const data = await response.json() as OpenAIResponse;
-        const result = JSON.parse(data.choices[0].message.content) as CategorizationResult;
+        let result: CategorizationResult;
+        
+        try {
+            result = JSON.parse(data.choices[0].message.content) as CategorizationResult;
+        } catch (parseError) {
+            throw new ErrorState({
+                message: 'Invalid response format from AI',
+                code: ErrorCode.API_ERROR
+            });
+        }
         
         const matchedCategory = categories.find(
             c => c.name.toLowerCase() === result.categoryId.toLowerCase()

@@ -34,8 +34,12 @@ export const ApiConfigForm: React.FC<ApiConfigFormProps> = ({
                     </p>
                     <p className="text-sm text-gray-600 flex gap-1">
                         You can get an API key from {' '}
-                        <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="font-semibold hover:underline flex gap-1 items-center">
-                            OpenAI <ExternalLink className="w-3 h-3" />
+                        <a href="https://platform.openai.com/api-keys"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="font-semibold hover:underline flex gap-1 items-center"
+                        >
+                            OpenAI platform <ExternalLink className="w-3 h-3" />
                         </a>
                     </p>
                 </div>
