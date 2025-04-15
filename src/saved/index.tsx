@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import { ArrowLeft } from 'lucide-react';
 import { useUrlFilters } from '../hooks/useUrlFilters';
 import { Category, SavedUrl } from '../types/storage';
-import { Button } from '../components/ui/Button';
 import { FilterBar } from '../components/features/FilterBar';
 import { SavedUrlsList } from '../components/features/SavedUrlsList';
 import { ErrorMessage } from '../components/common/ErrorMessage';
+import { Header } from '../components/layout/Header';
 import { loadCategories } from '../services/category';
 import { loadSavedUrls, deleteSavedUrl } from '../services/url';
 
@@ -54,16 +53,10 @@ const SavedUrls: React.FC = () => {
 
     return (
         <div className="max-w-4xl mx-auto p-6">
-            <div className="flex items-center gap-4 mb-6">
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => window.location.href = 'options.html'}
-                >
-                    <ArrowLeft className="w-4 h-4" />
-                </Button>
-                <h1 className="text-2xl font-semibold">Saved URLs</h1>
-            </div>
+            <Header
+                onSettingsClick={() => window.location.href = 'options.html'}
+                isOptionsPage={false}
+            />
 
             <FilterBar
                 categories={categories}

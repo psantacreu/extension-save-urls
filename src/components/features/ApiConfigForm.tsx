@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/input';
 import { ErrorMessage } from '../common/ErrorMessage';
+import { Key, CheckCircle2, AlertCircle } from 'lucide-react';
 
 interface ApiConfigFormProps {
     initialApiKey: string;
@@ -28,7 +29,6 @@ export const ApiConfigForm: React.FC<ApiConfigFormProps> = ({
         return (
             <div className="space-y-4">
                 <div className="space-y-2">
-                    <h3 className="text-lg font-medium">OpenAI API Configuration</h3>
                     <p className="text-sm text-gray-600">
                         Configure your OpenAI API key to enable AI-powered features. Your API key is stored securely and only used for your requests. You can obtain an API key from the{' '}
                         <a
@@ -42,15 +42,26 @@ export const ApiConfigForm: React.FC<ApiConfigFormProps> = ({
                     </p>
                 </div>
                 <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">
-                        {initialApiKey ? "API key is configured" : "No API key configured"}
+                    <span className={`text-sm flex items-center gap-1 ${initialApiKey ? "text-success" : "text-error"}`}>
+                        {initialApiKey ? (
+                            <>
+                                <CheckCircle2 className="w-4 h-4" />
+                                API key is configured
+                            </>
+                        ) : (
+                            <>
+                                <AlertCircle className="w-4 h-4" />
+                                No API key configured
+                            </>
+                        )}
                     </span>
                     <Button
                         onClick={() => setIsEditing(true)}
                         variant="outline"
                         size="sm"
                     >
-                        {initialApiKey ? "Change API Key" : "Add API Key"}
+                        <Key className="w-3 h-3 mr-2" />
+                        {initialApiKey ? "Edit API Key" : "Configure API Key"}
                     </Button>
                 </div>
             </div>

@@ -14,8 +14,8 @@ A Chrome extension that uses OpenAI to summarize web pages and links.
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/link-summarizer-extension.git
-cd link-summarizer-extension
+git clone https://github.com/psantacreu/extension-save-urls.git
+cd extension-save-urls
 ```
 
 2. Install dependencies:

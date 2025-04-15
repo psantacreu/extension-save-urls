@@ -17,12 +17,16 @@ const Popup: React.FC = () => {
 
     useEffect(() => {
         const loadData = async () => {
-            const data = await getStorageData();
-            if (!data.openaiApiKey) {
-                throw new Error('Please set your OpenAI API key in the options page');
+            try {
+                const data = await getStorageData();
+                if (!data.openaiApiKey) {
+                    throw new Error('Please set your OpenAI API key in the options page');
+                }
+                if (data.categories) setCategories(data.categories);
+                if (data.savedUrls) setSavedUrls(data.savedUrls);
+            } catch (err) {
+                setError({ message: err instanceof Error ? err.message : 'Failed to load data' });
             }
-            if (data.categories) setCategories(data.categories);
-            if (data.savedUrls) setSavedUrls(data.savedUrls);
         };
         loadData();
     }, []);
@@ -31,11 +35,18 @@ const Popup: React.FC = () => {
         try {
             setLoading(true);
             setError(null);
+            setSuccess(false);
 
             const newUrl = await saveCurrentUrl(categoryId, categories);
             const updatedUrls = [...savedUrls, newUrl];
+
+            // Update both storage and local state
             await setStorageData({ savedUrls: updatedUrls });
             setSavedUrls(updatedUrls);
+            setSuccess(true);
+
+            // Reset success message after 3 seconds
+            setTimeout(() => setSuccess(false), 3000);
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : 'Failed to save URL';
             setError({ message: errorMessage });
@@ -51,10 +62,10 @@ const Popup: React.FC = () => {
     return (
         <div className="w-[400px] p-4">
             <Header
-                title="Save URL"
                 onSettingsClick={() => chrome.runtime.openOptionsPage()}
-                showSavedButton={true}
+                isOptionsPage={false}
                 savedUrlsCount={savedUrls.length}
+                onSavedUrlsClick={() => chrome.runtime.openOptionsPage()}
             />
             <div className="mt-4">
                 <SaveUrlForm

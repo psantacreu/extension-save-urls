@@ -19,7 +19,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
     onDateChange,
 }) => {
     return (
-        <div className="flex gap-4 mb-6">
+        <div className="flex gap-4 my-6">
             <div className="flex items-center gap-2">
                 <Filter className="w-4 h-4" />
                 <Select value={selectedCategory} onValueChange={onCategoryChange}>

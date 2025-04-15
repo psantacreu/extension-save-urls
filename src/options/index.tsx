@@ -13,11 +13,6 @@ const Options: React.FC = () => {
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<{ message: string } | null>(null);
-    const [newCategory, setNewCategory] = useState<Omit<Category, 'id'>>({
-        name: '',
-        description: '',
-        color: '#000000'
-    });
 
     useEffect(() => {
         const loadData = async () => {
@@ -40,12 +35,11 @@ const Options: React.FC = () => {
         }
     };
 
-    const handleAddCategory = async () => {
+    const handleAddCategory = async (category: Omit<Category, 'id'>) => {
         try {
             setError(null);
-            const newCategoryWithId = await addCategory(newCategory, categories);
+            const newCategoryWithId = await addCategory(category, categories);
             setCategories(prev => [...prev, newCategoryWithId]);
-            setNewCategory({ name: '', description: '', color: '#000000' });
         } catch (err) {
             setError({ message: err instanceof Error ? err.message : 'Failed to add category' });
         }
@@ -74,8 +68,8 @@ const Options: React.FC = () => {
     return (
         <div className="max-w-4xl mx-auto p-6">
             <Header
-                title="Settings"
                 onSettingsClick={() => window.location.href = 'saved.html'}
+                isOptionsPage={true}
             />
 
             <div className="space-y-8 mt-6">
@@ -93,11 +87,10 @@ const Options: React.FC = () => {
                     <h2 className="text-lg font-semibold mb-4">Categories</h2>
                     <CategoryManager
                         categories={categories}
-                        newCategory={newCategory}
-                        onNewCategoryChange={setNewCategory}
                         onAddCategory={handleAddCategory}
                         onDeleteCategory={handleDeleteCategory}
                         onUpdateCategory={handleUpdateCategory}
+                        error={error?.message}
                     />
                 </div>
             </div>
