@@ -54,4 +54,14 @@ export interface LoadingState {
     isLoading: boolean;
     /** Optional message to display during loading */
     message?: string;
+}
+
+/**
+ * Represents a category with a unique identifier and a name
+ */
+export interface Category {
+    /** The unique identifier of the category */
+    id: string;
+    /** The name of the category */
+    name: string;
 } 

@@ -1,4 +1,5 @@
 import { ErrorState, ErrorCode } from '../types';
+import { Category } from '../types/storage';
 
 const API_URL = 'https://api.openai.com/v1/chat/completions';
 
@@ -18,7 +19,7 @@ export const summarizeUrl = async (url: string): Promise<string> => {
                 'Authorization': `Bearer ${openaiApiKey}`
             },
             body: JSON.stringify({
-                model: 'gpt-4',
+                model: 'gpt-4o',
                 messages: [
                     {
                         role: 'system',
@@ -48,4 +49,42 @@ export const summarizeUrl = async (url: string): Promise<string> => {
             code: ErrorCode.REQUEST_FAILED
         });
     }
+};
+
+export const summarizeAndCategorize = async (
+    content: string,
+    categories: Category[],
+    apiKey: string
+): Promise<{ summary: string; categoryId: string }> => {
+    const prompt = `Please analyze this content and:
+1. Provide a concise summary (max 100 words)
+2. Categorize it into one of these categories: ${categories.map(c => c.name).join(', ')}
+3. Return the response in JSON format with "summary" and "categoryId" fields
+
+Content: ${content}`;
+
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+            model: 'gpt-3.5-turbo',
+            messages: [{ role: 'user', content: prompt }],
+            temperature: 0.7,
+        }),
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to analyze content');
+    }
+
+    const data = await response.json();
+    const result = JSON.parse(data.choices[0].message.content);
+    
+    return {
+        summary: result.summary,
+        categoryId: categories.find(c => c.name.toLowerCase() === result.categoryId.toLowerCase())?.id || categories[0].id,
+    };
 }; 

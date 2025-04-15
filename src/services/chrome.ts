@@ -1,4 +1,5 @@
 import { Tab, ErrorState, ErrorCode } from '../types';
+import { StorageData } from '../types/storage';
 
 /**
  * Gets the currently active tab in the current window
@@ -45,4 +46,20 @@ export const openOptionsPage = (): void => {
             code: ErrorCode.UNKNOWN_ERROR
         });
     }
+};
+
+export const getStorageData = async (): Promise<StorageData> => {
+    return new Promise((resolve) => {
+        chrome.storage.sync.get(['openaiApiKey', 'categories', 'savedUrls'], (result: StorageData) => {
+            resolve(result);
+        });
+    });
+};
+
+export const setStorageData = async (data: Partial<StorageData>): Promise<void> => {
+    return new Promise((resolve) => {
+        chrome.storage.sync.set(data, () => {
+            resolve();
+        });
+    });
 }; 

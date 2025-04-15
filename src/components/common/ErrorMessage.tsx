@@ -1,6 +1,6 @@
 import React from 'react';
-import { ErrorState, ErrorCode } from '../types';
-import { cn } from '../utils/cn';
+import { ErrorState, ErrorCode } from '../../types';
+import { cn } from '../../utils/cn';
 
 /**
  * Props for the ErrorMessage component

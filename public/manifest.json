@@ -11,5 +11,11 @@
     "service_worker": "background.js",
     "type": "module"
   },
-  "permissions": ["activeTab", "storage"]
+  "permissions": ["activeTab", "storage"],
+  "web_accessible_resources": [
+    {
+      "resources": ["options.html", "saved.html"],
+      "matches": ["<all_urls>"]
+    }
+  ]
 }
