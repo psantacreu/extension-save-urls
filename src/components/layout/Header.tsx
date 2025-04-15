@@ -1,6 +1,7 @@
 import React from 'react';
 import { Settings, Bookmark, Link, Book } from 'lucide-react';
 import { Button } from '../ui/Button';
+import { Badge } from '../ui/badge';
 
 interface HeaderProps {
     onSettingsClick: () => void;
@@ -13,7 +14,6 @@ export const Header: React.FC<HeaderProps> = ({
     onSettingsClick,
     isOptionsPage = false,
     savedUrlsCount,
-    onSavedUrlsClick,
 }) => {
     return (
         <header className="flex items-center justify-between p-4 border-b">
@@ -22,21 +22,9 @@ export const Header: React.FC<HeaderProps> = ({
                 <h1 className="text-xl font-semibold">Linkbook</h1>
             </div>
             <div className="flex items-center gap-2">
-                {onSavedUrlsClick && (
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={onSavedUrlsClick}
-                        className="relative"
-                    >
-                        <Link className="w-4 h-4" />
-                        {savedUrlsCount && savedUrlsCount > 0 && (
-                            <span className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-                                {savedUrlsCount}
-                            </span>
-                        )}
-                    </Button>
-                )}
+                <Badge>
+                    Saved {savedUrlsCount ?? 0} {savedUrlsCount && savedUrlsCount > 1 ? 'URLs' : 'URL'}
+                </Badge>
                 <Button
                     variant="ghost"
                     size="icon"
@@ -49,6 +37,6 @@ export const Header: React.FC<HeaderProps> = ({
                     )}
                 </Button>
             </div>
-        </header>
+        </header >
     );
 }; 

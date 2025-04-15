@@ -37,10 +37,16 @@ export const SaveUrlForm: React.FC<SaveUrlFormProps> = ({
                     <SelectTrigger>
                         <SelectValue placeholder="Select a category (optional)" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent side="bottom" align="start" className="max-h-[80px] overflow-y-auto">
                         {categories.map(category => (
                             <SelectItem key={category.id} value={category.id}>
-                                {category.name}
+                                <div className="flex items-center gap-2">
+                                    <div
+                                        className="w-2 h-2 rounded-full"
+                                        style={{ backgroundColor: category.color }}
+                                    />
+                                    {category.name}
+                                </div>
                             </SelectItem>
                         ))}
                     </SelectContent>
