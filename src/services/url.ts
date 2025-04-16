@@ -50,6 +50,15 @@ export const saveCurrentUrl = async (
             });
         }
 
+        // Check for duplicate URL
+        const existingUrl = (data.savedUrls || []).find(savedUrl => savedUrl.url === tab.url);
+        if (existingUrl) {
+            throw new ErrorState({
+                message: 'This URL has already been saved',
+                code: ErrorCode.DUPLICATE_URL
+            });
+        }
+
         const { summary, categoryId: suggestedCategoryId } = await summarizeAndCategorize(
             `${tab.title}\n${tab.url}`,
             categories,
