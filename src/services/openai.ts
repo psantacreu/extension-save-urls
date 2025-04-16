@@ -5,6 +5,7 @@ import {
     CategorizationResult, 
     DEFAULT_OPENAI_CONFIG 
 } from '@/types/openai';
+import { ScrapedContent } from '@/types/scraper';
 
 /**
  * Creates headers for OpenAI API requests
@@ -89,14 +90,14 @@ export const summarizeUrl = async (url: string): Promise<string> => {
 
 /**
  * Summarizes content and categorizes it into one of the provided categories
- * @param content - The content to analyze
+ * @param scrapedContent - The scraped content to analyze
  * @param categories - Available categories
  * @param apiKey - OpenAI API key
  * @returns Promise with summary and category ID
  * @throws ErrorState if request fails
  */
 export const summarizeAndCategorize = async (
-    content: string,
+    scrapedContent: ScrapedContent,
     categories: Category[],
     apiKey: string
 ): Promise<CategorizationResult> => {
@@ -107,16 +108,25 @@ export const summarizeAndCategorize = async (
         });
     }
 
+    // Create a prompt that includes both text and image information
     const prompt = `Please analyze this content and:
-1. Provide a concise summary (max 100 words)
+1. Provide a summary that contains the core information of the content (max 100 words)
 2. Categorize it into one of these categories: ${categories.map(c => c.name).join(', ')}
-3. Return ONLY a valid JSON object with this exact structure:
+
+Content: ${scrapedContent.text}
+${scrapedContent.images.length > 0 ? `\nImages found on the page: ${scrapedContent.images.join(', ')}` : ''}
+
+## Rules
+- Never let the summary start with "The content describes...", "Content/page is about..." or similar phrases.
+- The summary should be concise and to the point with the core points of the page.
+- The summary should be in English.
+- The category name should be exactly as listed above.
+- Return ONLY a valid JSON object with this exact structure:
 {
     "summary": "your summary here",
-    "categoryId": "exact category name from the list above"
+    "categoryId": "category name"
 }
-
-Content: ${content}`;
+`;
 
     try {
         const response = await fetch(DEFAULT_OPENAI_CONFIG.apiUrl, {

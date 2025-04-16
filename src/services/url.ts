@@ -2,6 +2,7 @@ import { SavedUrl, Category } from '@/types/storage';
 import { getStorageData, setStorageData } from '@/services/chrome';
 import { summarizeAndCategorize } from '@/services/openai';
 import { ErrorState, ErrorCode } from '@/types';
+import { scrapePage } from './scraper';
 
 export const loadUrls = async (): Promise<SavedUrl[]> => {
     try {
@@ -59,8 +60,12 @@ export const saveCurrentUrl = async (
             });
         }
 
+        // Scrape the page content
+        const scrapedContent = await scrapePage(tab.url);
+
+        // Get summary and category from OpenAI
         const { summary, categoryId: suggestedCategoryId } = await summarizeAndCategorize(
-            `${tab.title}\n${tab.url}`,
+            scrapedContent,
             categories,
             data.openaiApiKey
         );

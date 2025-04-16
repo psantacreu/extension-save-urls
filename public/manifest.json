@@ -11,10 +11,17 @@
     "service_worker": "background.js",
     "type": "module"
   },
-  "permissions": ["activeTab", "storage"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content-scripts/scraper.js"]
+    }
+  ],
+  "permissions": ["activeTab", "storage", "scripting"],
+  "host_permissions": ["<all_urls>"],
   "web_accessible_resources": [
     {
-      "resources": ["options.html", "saved.html"],
+      "resources": ["options.html", "saved.html", "content-scripts/scraper.js"],
       "matches": ["<all_urls>"]
     }
   ]
