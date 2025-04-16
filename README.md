@@ -39,7 +39,6 @@ npm run build
 
 - API keys are stored securely in Chrome's storage
 - Consider using a backend proxy for additional security
-- Implement rate limiting for API calls
 
 ## License
 
