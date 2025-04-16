@@ -1,10 +1,10 @@
-import { ErrorState, ErrorCode } from '../types';
-import { Category } from '../types/storage';
+import { ErrorState, ErrorCode } from '@/types';
+import { Category } from '@/types/storage';
 import { 
     OpenAIResponse, 
     CategorizationResult, 
     DEFAULT_OPENAI_CONFIG 
-} from '../types/openai';
+} from '@/types/openai';
 
 /**
  * Creates headers for OpenAI API requests

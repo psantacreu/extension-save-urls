@@ -1,5 +1,5 @@
-import { Tab, ErrorState, ErrorCode } from '../types';
-import { StorageData } from '../types/storage';
+import { Tab, ErrorState, ErrorCode } from '@/types';
+import { StorageData } from '@/types/storage';
 
 /**
  * Gets the currently active tab in the current window

@@ -1,6 +1,6 @@
-import { Category } from '../types/storage';
-import { getStorageData, setStorageData } from './chrome';
-import { ErrorState, ErrorCode } from '../types';
+import { Category } from '@/types/storage';
+import { getStorageData, setStorageData } from '@/services/chrome';
+import { ErrorState, ErrorCode } from '@/types';
 
 export const loadCategories = async (): Promise<Category[]> => {
     try {

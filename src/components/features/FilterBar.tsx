@@ -1,7 +1,7 @@
 import React from 'react';
 import { Filter, Calendar } from 'lucide-react';
-import { Category } from '../../types/storage';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Category } from '@/types/storage';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface FilterBarProps {
     categories: Category[];

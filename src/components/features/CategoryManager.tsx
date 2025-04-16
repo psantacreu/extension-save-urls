@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Trash2, Pencil, Check, X } from 'lucide-react';
-import { Category } from '../../types/storage';
-import { Button } from '../ui/Button';
-import { Input } from '../ui/input';
-import { Textarea } from '../../components/ui/textarea';
-import { Card, CardContent } from '../ui/card';
+import { Category } from '@/types/storage';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Card, CardContent } from '@/components/ui/card';
 import { CategoryForm } from './CategoryForm';
 import {
     AlertDialog,
@@ -15,7 +15,7 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-} from '../ui/alert-dialog';
+} from '@/components/ui/alert-dialog';
 
 interface CategoryManagerProps {
     categories: Category[];

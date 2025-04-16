@@ -1,24 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Category } from '../types/storage';
-import { Header } from '../components/layout/Header';
-import { ApiConfigForm } from '../components/features/ApiConfigForm';
-import { CategoryManager } from '../components/features/CategoryManager';
-import { getStorageData } from '../services/chrome';
-import { saveApiKey } from '../services/openai';
-import { addCategory, deleteCategory, updateCategory } from '../services/category';
+import { Category, SavedUrl } from '@/types/storage';
+import { Header } from '@/components/layout/Header';
+import { ApiConfigForm } from '@/components/features/ApiConfigForm';
+import { CategoryManager } from '@/components/features/CategoryManager';
+import { saveApiKey } from '@/services/openai';
+import { addCategory, deleteCategory, updateCategory } from '@/services/category';
+import { loadExtensionData } from '@/utils/loadData';
 
 const Options: React.FC = () => {
     const [apiKey, setApiKey] = useState('');
     const [categories, setCategories] = useState<Category[]>([]);
+    const [savedUrls, setSavedUrls] = useState<SavedUrl[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<{ message: string } | null>(null);
 
     useEffect(() => {
         const loadData = async () => {
-            const data = await getStorageData();
-            if (data.openaiApiKey) setApiKey(data.openaiApiKey);
-            if (data.categories) setCategories(data.categories);
+            const { openaiApiKey, categories, savedUrls } = await loadExtensionData();
+            if (openaiApiKey) setApiKey(openaiApiKey);
+            setCategories(categories);
+            setSavedUrls(savedUrls);
         };
         loadData();
     }, []);
@@ -69,9 +71,10 @@ const Options: React.FC = () => {
         <div className="max-w-4xl mx-auto p-6">
             <Header
                 onSettingsClick={() => window.location.href = 'saved.html'}
+                savedUrlsCount={savedUrls.length}
                 isOptionsPage={true}
             />
-
+            <h1 className="text-2xl font-semibold mt-4">Settings</h1>
             <div className="space-y-8 mt-6">
                 <div>
                     <h2 className="text-lg font-semibold mb-4">API Configuration</h2>

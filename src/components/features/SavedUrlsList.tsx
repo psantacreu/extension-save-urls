@@ -1,8 +1,8 @@
 import React from 'react';
-import { SavedUrl } from '../../types/storage';
-import { Category } from '../../types/storage';
+import { SavedUrl } from '@/types/storage';
+import { Category } from '@/types/storage';
 import UrlCard from './UrlCard';
-import { LoadingState } from '../common/LoadingState';
+import { LoadingState } from '@/components/common/LoadingState';
 
 interface SavedUrlsListProps {
     urls: SavedUrl[];

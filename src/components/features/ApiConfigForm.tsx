@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Button } from '../ui/Button';
-import { Input } from '../ui/input';
-import { ErrorMessage } from '../common/ErrorMessage';
-import { Key, CheckCircle2, AlertCircle, ExternalLink } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/input';
+import { ErrorMessage } from '@/components/common/ErrorMessage';
+import { Key, CheckCircle2, AlertCircle, ExternalLink, Save, XCircle } from 'lucide-react';
 
 interface ApiConfigFormProps {
     initialApiKey: string;
@@ -43,29 +43,27 @@ export const ApiConfigForm: React.FC<ApiConfigFormProps> = ({
                         </a>
                     </p>
                 </div>
-                <div className="flex items-center justify-between">
-                    <span className={`text-sm flex items-center gap-1 ${initialApiKey ? "text-success" : "text-error"}`}>
-                        {initialApiKey ? (
-                            <>
-                                <CheckCircle2 className="w-4 h-4" />
-                                API key is configured
-                            </>
-                        ) : (
-                            <>
-                                <AlertCircle className="w-4 h-4" />
-                                No API key configured
-                            </>
-                        )}
-                    </span>
-                    <Button
-                        onClick={() => setIsEditing(true)}
-                        variant="outline"
-                        size="sm"
-                    >
-                        <Key className="w-3 h-3 mr-2" />
-                        {initialApiKey ? "Edit API Key" : "Configure API Key"}
-                    </Button>
-                </div>
+                <Button
+                    onClick={() => setIsEditing(true)}
+                    variant="outline"
+                    size="sm"
+                >
+                    <Key className="w-3 h-3 mr-2" />
+                    {initialApiKey ? "Edit API Key" : "Configure API Key"}
+                </Button>
+                <span className={`text-sm flex items-center gap-1 ${initialApiKey ? "text-success" : "text-error"}`}>
+                    {initialApiKey ? (
+                        <>
+                            <CheckCircle2 className="w-4 h-4" />
+                            API key is configured
+                        </>
+                    ) : (
+                        <>
+                            <AlertCircle className="w-4 h-4" />
+                            No API key configured
+                        </>
+                    )}
+                </span>
             </div>
         );
     }
@@ -81,20 +79,20 @@ export const ApiConfigForm: React.FC<ApiConfigFormProps> = ({
                 />
                 {error && <ErrorMessage error={error} />}
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 justify-start">
                 <Button
                     onClick={handleSave}
                     disabled={!apiKey || loading}
-                    className="flex-1"
+                    size="sm"
                 >
-                    {loading ? 'Saving...' : 'Save API Key'}
+                    {loading ? 'Saving...' : <><Save className="w-3 h-3 mr-1" />Save API Key</>}
                 </Button>
                 <Button
                     onClick={() => setIsEditing(false)}
                     variant="outline"
-                    className="flex-1"
+                    size="sm"
                 >
-                    Cancel
+                    <><XCircle className="text-destructive w-3 h-3 mr-1" /> Cancel</>
                 </Button>
             </div>
         </div>

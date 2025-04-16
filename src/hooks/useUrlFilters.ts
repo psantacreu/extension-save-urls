@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
-import { SavedUrl } from '../types/storage';
-import { isWithinDateRange } from '../utils/filters';
+import { SavedUrl } from '@/types/storage';
+import { isWithinDateRange } from '@/utils/filters';
 
 export const useUrlFilters = (urls: SavedUrl[]) => {
     const [selectedCategory, setSelectedCategory] = useState<string>('all');

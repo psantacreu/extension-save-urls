@@ -1,7 +1,7 @@
-import { SavedUrl, Category } from '../types/storage';
-import { getStorageData, setStorageData } from './chrome';
-import { summarizeAndCategorize } from './openai';
-import { ErrorState, ErrorCode } from '../types';
+import { SavedUrl, Category } from '@/types/storage';
+import { getStorageData, setStorageData } from '@/services/chrome';
+import { summarizeAndCategorize } from '@/services/openai';
+import { ErrorState, ErrorCode } from '@/types';
 
 export const loadUrls = async (): Promise<SavedUrl[]> => {
     try {

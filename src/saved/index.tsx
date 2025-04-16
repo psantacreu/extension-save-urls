@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import { useUrlFilters } from '../hooks/useUrlFilters';
-import { Category, SavedUrl } from '../types/storage';
-import { FilterBar } from '../components/features/FilterBar';
-import { SavedUrlsList } from '../components/features/SavedUrlsList';
-import { ErrorMessage } from '../components/common/ErrorMessage';
-import { Header } from '../components/layout/Header';
-import { loadCategories } from '../services/category';
-import { loadUrls, deleteUrl, updateUrlCategory } from '@/services/url';
+import { useUrlFilters } from '@/hooks/useUrlFilters';
+import { Category, SavedUrl } from '@/types/storage';
+import { FilterBar } from '@/components/features/FilterBar';
+import { SavedUrlsList } from '@/components/features/SavedUrlsList';
+import { ErrorMessage } from '@/components/common/ErrorMessage';
+import { Header } from '@/components/layout/Header';
+import { deleteUrl, updateUrlCategory } from '@/services/url';
+import { loadExtensionData } from '@/utils/loadData';
 
 const SavedUrls: React.FC = () => {
     const [savedUrls, setSavedUrls] = useState<SavedUrl[]>([]);
@@ -26,12 +26,9 @@ const SavedUrls: React.FC = () => {
         const loadData = async () => {
             try {
                 setError(null);
-                const [loadedUrls, loadedCategories] = await Promise.all([
-                    loadUrls(),
-                    loadCategories()
-                ]);
-                setSavedUrls(loadedUrls);
-                setCategories(loadedCategories);
+                const { categories, savedUrls } = await loadExtensionData();
+                setSavedUrls(savedUrls);
+                setCategories(categories);
             } catch (err) {
                 setError({ message: err instanceof Error ? err.message : 'Failed to load data' });
             } finally {
@@ -65,9 +62,10 @@ const SavedUrls: React.FC = () => {
         <div className="max-w-4xl mx-auto p-6">
             <Header
                 onSettingsClick={() => window.location.href = 'options.html'}
+                savedUrlsCount={savedUrls.length}
                 isOptionsPage={false}
             />
-
+            <h1 className="text-2xl font-semibold mt-4">Saved urls</h1>
             <FilterBar
                 categories={categories}
                 selectedCategory={selectedCategory}

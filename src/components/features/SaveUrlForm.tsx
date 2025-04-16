@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Category } from '../../types/storage';
-import { Button } from '../ui/Button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { ErrorMessage } from '../common/ErrorMessage';
+import { Category } from '@/types/storage';
+import { Button } from '@/components/ui/Button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ErrorMessage } from '@/components/common/ErrorMessage';
 import { CheckCircle2 } from 'lucide-react';
 
 interface SaveUrlFormProps {
@@ -37,7 +37,7 @@ export const SaveUrlForm: React.FC<SaveUrlFormProps> = ({
                     <SelectTrigger>
                         <SelectValue placeholder="Select a category (optional)" />
                     </SelectTrigger>
-                    <SelectContent side="bottom" align="start" className="max-h-[80px] overflow-y-auto">
+                    <SelectContent side="bottom" align="start" className="max-h-100px] overflow-y-auto">
                         {categories.map(category => (
                             <SelectItem key={category.id} value={category.id}>
                                 <div className="flex items-center gap-2">
