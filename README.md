@@ -4,9 +4,9 @@ A Chrome extension that uses OpenAI to summarize web pages and links.
 
 ## Features
 
-- Summarize any webpage or link
-- Save and manage your summaries
-- Fuzzy search your saved urls
+- Save and Summarize any webpage or link
+- Categorize your saved pages
+- Find your links with fuzzy search
 
 ## Setup
 
@@ -23,21 +23,7 @@ cd extension-save-urls
 npm install
 ```
 
-3. Create your environment file:
-
-```bash
-cp .env.example .env
-```
-
-4. Add your OpenAI API key to `.env`
-
-## Development
-
-```bash
-npm run dev
-```
-
-## Building
+3. Build the app
 
 ```bash
 npm run build
