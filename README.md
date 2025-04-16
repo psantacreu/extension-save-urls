@@ -6,8 +6,7 @@ A Chrome extension that uses OpenAI to summarize web pages and links.
 
 - Summarize any webpage or link
 - Save and manage your summaries
-- Customizable summary length
-- Dark/Light mode support
+- Fuzzy search your saved urls
 
 ## Setup
 
