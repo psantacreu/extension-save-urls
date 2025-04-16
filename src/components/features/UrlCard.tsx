@@ -1,9 +1,15 @@
 import React from 'react';
-import { Trash2, ExternalLink } from 'lucide-react';
-import { UrlCardProps } from '../../types/storage';
-import { Button } from '../ui/Button';
-import { Badge } from '../ui/badge';
-import { formatSavedDate } from '../../utils/date';
+import { Trash2, ExternalLink, ChevronDown } from 'lucide-react';
+import { UrlCardProps } from '@/types/storage';
+import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/badge';
+import { formatSavedDate } from '@/utils/date';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 /**
  * Component that displays a saved URL with its metadata
@@ -11,6 +17,7 @@ import { formatSavedDate } from '../../utils/date';
  * @returns A card displaying URL information
  */
 const UrlCard: React.FC<UrlCardProps> = ({
+    id,
     title,
     url,
     summary,
@@ -18,6 +25,7 @@ const UrlCard: React.FC<UrlCardProps> = ({
     savedAt,
     categories,
     onDelete,
+    onCategoryChange,
 }) => {
     const category = categories.find(c => c.id === categoryId);
     const formattedDate = formatSavedDate(savedAt);
@@ -25,6 +33,10 @@ const UrlCard: React.FC<UrlCardProps> = ({
     const handleDelete = (e: React.MouseEvent) => {
         e.preventDefault();
         onDelete?.();
+    };
+
+    const handleCategoryChange = (newCategoryId: string) => {
+        onCategoryChange?.(id, newCategoryId);
     };
 
     return (
@@ -53,22 +65,62 @@ const UrlCard: React.FC<UrlCardProps> = ({
             </div>
             <p className="text-sm text-muted-foreground">{summary}</p>
             <div className="flex items-center gap-2 mt-2">
-                <Badge
-                    variant="outline"
-                    className="flex items-center gap-1.5"
-                    style={{
-                        borderColor: category?.color || '#000',
-                        color: category?.color || '#000',
-                    }}
-                >
-                    <div
-                        className="w-2 h-2 rounded-full"
+                {onCategoryChange ? (
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="flex items-center gap-1.5 h-6 px-2"
+                                style={{
+                                    borderColor: category?.color || '#000',
+                                    color: category?.color || '#000',
+                                }}
+                            >
+                                <div
+                                    className="w-2 h-2 rounded-full"
+                                    style={{
+                                        backgroundColor: category?.color || '#000',
+                                    }}
+                                />
+                                {category?.name || 'Uncategorized'}
+                                <ChevronDown className="w-3 h-3" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            {categories.map((cat) => (
+                                <DropdownMenuItem
+                                    key={cat.id}
+                                    onClick={() => handleCategoryChange(cat.id)}
+                                    className="flex items-center gap-2"
+                                >
+                                    <div
+                                        className="w-2 h-2 rounded-full"
+                                        style={{ backgroundColor: cat.color }}
+                                    />
+                                    {cat.name}
+                                </DropdownMenuItem>
+                            ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                ) : (
+                    <Badge
+                        variant="outline"
+                        className="flex items-center gap-1.5"
                         style={{
-                            backgroundColor: category?.color || '#000',
+                            borderColor: category?.color || '#000',
+                            color: category?.color || '#000',
                         }}
-                    />
-                    {category?.name || 'Uncategorized'}
-                </Badge>
+                    >
+                        <div
+                            className="w-2 h-2 rounded-full"
+                            style={{
+                                backgroundColor: category?.color || '#000',
+                            }}
+                        />
+                        {category?.name || 'Uncategorized'}
+                    </Badge>
+                )}
                 <span className="text-xs text-muted-foreground">
                     •  Saved {formattedDate}
                 </span>

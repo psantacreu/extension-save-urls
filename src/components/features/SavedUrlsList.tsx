@@ -9,6 +9,7 @@ interface SavedUrlsListProps {
     categories: Category[];
     loading: boolean;
     onDelete: (id: string) => void;
+    onCategoryChange?: (urlId: string, newCategoryId: string) => void;
 }
 
 export const SavedUrlsList: React.FC<SavedUrlsListProps> = ({
@@ -16,6 +17,7 @@ export const SavedUrlsList: React.FC<SavedUrlsListProps> = ({
     categories,
     loading,
     onDelete,
+    onCategoryChange,
 }) => {
     if (loading) {
         return <LoadingState message="Loading saved URLs..." />;
@@ -55,6 +57,7 @@ export const SavedUrlsList: React.FC<SavedUrlsListProps> = ({
             {urls.map(url => (
                 <UrlCard
                     key={url.id}
+                    id={url.id}
                     title={url.title}
                     url={url.url}
                     summary={url.summary}
@@ -62,6 +65,7 @@ export const SavedUrlsList: React.FC<SavedUrlsListProps> = ({
                     savedAt={url.savedAt}
                     categories={categories}
                     onDelete={() => onDelete(url.id)}
+                    onCategoryChange={onCategoryChange}
                 />
             ))}
         </div>

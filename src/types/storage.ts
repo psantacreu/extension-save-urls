@@ -75,6 +75,7 @@ export const DEFAULT_CATEGORIES: Readonly<Category[]> = [
  * Props for the UrlCard component
  */
 export interface UrlCardProps {
+    id: string;
     title: string;
     url: string;
     summary: string;
@@ -82,4 +83,5 @@ export interface UrlCardProps {
     savedAt: number;
     categories: Category[];
     onDelete?: () => void;
+    onCategoryChange?: (urlId: string, newCategoryId: string) => void;
 } 

@@ -3,21 +3,22 @@ import { getStorageData, setStorageData } from './chrome';
 import { summarizeAndCategorize } from './openai';
 import { ErrorState, ErrorCode } from '../types';
 
-export const loadSavedUrls = async (): Promise<SavedUrl[]> => {
+export const loadUrls = async (): Promise<SavedUrl[]> => {
     try {
         const data = await getStorageData();
         return data.savedUrls || [];
     } catch (error) {
         throw new ErrorState({
-            message: 'Failed to load saved URLs',
+            message: 'Failed to load URLs',
             code: ErrorCode.STORAGE_ERROR
         });
     }
 };
 
-export const deleteSavedUrl = async (id: string, existingUrls: SavedUrl[]): Promise<SavedUrl[]> => {
+export const deleteUrl = async (id: string): Promise<SavedUrl[]> => {
     try {
-        const updatedUrls = existingUrls.filter(url => url.id !== id);
+        const data = await getStorageData();
+        const updatedUrls = (data.savedUrls || []).filter(url => url.id !== id);
         await setStorageData({ savedUrls: updatedUrls });
         return updatedUrls;
     } catch (error) {
@@ -75,6 +76,22 @@ export const saveCurrentUrl = async (
         throw new ErrorState({
             message: 'Failed to save URL',
             code: ErrorCode.UNKNOWN_ERROR
+        });
+    }
+};
+
+export const updateUrlCategory = async (urlId: string, newCategoryId: string): Promise<SavedUrl[]> => {
+    try {
+        const data = await getStorageData();
+        const updatedUrls = (data.savedUrls || []).map(url =>
+            url.id === urlId ? { ...url, categoryId: newCategoryId } : url
+        );
+        await setStorageData({ savedUrls: updatedUrls });
+        return updatedUrls;
+    } catch (error) {
+        throw new ErrorState({
+            message: 'Failed to update URL category',
+            code: ErrorCode.STORAGE_ERROR
         });
     }
 }; 

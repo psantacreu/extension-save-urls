@@ -7,7 +7,7 @@ import { SavedUrlsList } from '../components/features/SavedUrlsList';
 import { ErrorMessage } from '../components/common/ErrorMessage';
 import { Header } from '../components/layout/Header';
 import { loadCategories } from '../services/category';
-import { loadSavedUrls, deleteSavedUrl } from '../services/url';
+import { loadUrls, deleteUrl, updateUrlCategory } from '@/services/url';
 
 const SavedUrls: React.FC = () => {
     const [savedUrls, setSavedUrls] = useState<SavedUrl[]>([]);
@@ -27,7 +27,7 @@ const SavedUrls: React.FC = () => {
             try {
                 setError(null);
                 const [loadedUrls, loadedCategories] = await Promise.all([
-                    loadSavedUrls(),
+                    loadUrls(),
                     loadCategories()
                 ]);
                 setSavedUrls(loadedUrls);
@@ -44,10 +44,20 @@ const SavedUrls: React.FC = () => {
     const handleDelete = async (id: string) => {
         try {
             setError(null);
-            const updatedUrls = await deleteSavedUrl(id, savedUrls);
+            const updatedUrls = await deleteUrl(id);
             setSavedUrls(updatedUrls);
         } catch (err) {
             setError({ message: err instanceof Error ? err.message : 'Failed to delete URL' });
+        }
+    };
+
+    const handleCategoryChange = async (urlId: string, newCategoryId: string) => {
+        try {
+            setError(null);
+            const updatedUrls = await updateUrlCategory(urlId, newCategoryId);
+            setSavedUrls(updatedUrls);
+        } catch (err) {
+            setError({ message: err instanceof Error ? err.message : 'Failed to update category' });
         }
     };
 
@@ -73,6 +83,7 @@ const SavedUrls: React.FC = () => {
                 categories={categories}
                 loading={loading}
                 onDelete={handleDelete}
+                onCategoryChange={handleCategoryChange}
             />
         </div>
     );
