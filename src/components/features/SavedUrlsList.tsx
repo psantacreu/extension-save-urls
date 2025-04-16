@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { SavedUrl } from '@/types/storage';
 import { Category } from '@/types/storage';
 import UrlCard from './UrlCard';
 import { LoadingState } from '@/components/common/LoadingState';
+import { SearchInput } from './SearchInput';
+import { fuzzySearchUrls } from '@/utils/search';
 
 interface SavedUrlsListProps {
     urls: SavedUrl[];
@@ -19,6 +21,12 @@ export const SavedUrlsList: React.FC<SavedUrlsListProps> = ({
     onDelete,
     onCategoryChange,
 }) => {
+    const [searchQuery, setSearchQuery] = useState('');
+
+    const filteredUrls = useMemo(() => {
+        return fuzzySearchUrls(urls, searchQuery);
+    }, [urls, searchQuery]);
+
     if (loading) {
         return <LoadingState message="Loading saved URLs..." />;
     }
@@ -53,21 +61,34 @@ export const SavedUrlsList: React.FC<SavedUrlsListProps> = ({
     }
 
     return (
-        <div className="grid gap-4">
-            {urls.map(url => (
-                <UrlCard
-                    key={url.id}
-                    id={url.id}
-                    title={url.title}
-                    url={url.url}
-                    summary={url.summary}
-                    categoryId={url.categoryId}
-                    savedAt={url.savedAt}
-                    categories={categories}
-                    onDelete={() => onDelete(url.id)}
-                    onCategoryChange={onCategoryChange}
-                />
-            ))}
+        <div className="space-y-4">
+            <SearchInput
+                value={searchQuery}
+                onChange={setSearchQuery}
+                placeholder="Search by title, URL, or summary..."
+            />
+            {filteredUrls.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                    No URLs match your search criteria
+                </div>
+            ) : (
+                <div className="grid gap-4">
+                    {filteredUrls.map(url => (
+                        <UrlCard
+                            key={url.id}
+                            id={url.id}
+                            title={url.title}
+                            url={url.url}
+                            summary={url.summary}
+                            categoryId={url.categoryId}
+                            savedAt={url.savedAt}
+                            categories={categories}
+                            onDelete={() => onDelete(url.id)}
+                            onCategoryChange={onCategoryChange}
+                        />
+                    ))}
+                </div>
+            )}
         </div>
     );
 }; 
